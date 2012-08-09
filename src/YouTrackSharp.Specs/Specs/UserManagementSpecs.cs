@@ -103,4 +103,26 @@ namespace YouTrackSharp.Specs.Specs
         static UserManagement userManagement;
         static IEnumerable<Filter> filters;
     }
+
+    [Subject(typeof(UserManagement))]
+    public class when_user_manager_is_asked_to_create_a_new_user_with_a_password : AuthenticatedYouTrackConnection
+    {
+        Establish context = () => { userManagement = new UserManagement(connection); };
+
+        Because of = () =>
+                         {
+                             //userManagement.CreateUser("John.Doe", "John Doe", "John.Doe@test.com");
+                             createdResult = userManagement.CreateUser("John.Doe", "John Doe", "John.Doe@test.com", "J0hnD03");
+
+                             exception = Catch.Exception(() => connection.Authenticate("John.Doe", "J0hnD03"));
+                         };
+
+        It should_successfully_create_a_password = () => createdResult.ShouldBeTrue();
+        It should_successfully_login_the_newly_created_user = () => exception.ShouldBeNull();
+
+        static UserManagement userManagement;
+        static bool createdResult;
+        static bool loginResult;
+        static Exception exception;
+    }
 }

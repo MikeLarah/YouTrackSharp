@@ -30,6 +30,7 @@
 #endregion
 using System.Collections.Generic;
 using System.Net;
+using EasyHttp.Http;
 using YouTrackSharp.Projects;
 using YouTrackSharp.Server;
 
@@ -37,16 +38,17 @@ namespace YouTrackSharp.Infrastructure
 {
     public interface IConnection
     {
+        void Authenticate(string username, string password);
         T Get<T>(string command);
         IEnumerable<TInternal> Get<TWrapper, TInternal>(string command) where TWrapper : class, IDataWrapper<TInternal>;
-        dynamic Post(string command, object data, string accept);
-        void Authenticate(string username, string password);
-        void Logout();
         User GetCurrentAuthenticatedUser();
-        bool IsAuthenticated { get; }
-        HttpStatusCode HttpStatusCode { get; }
-        void PostFile(string command, string path);
         void Head(string command);
-        void Post(string command, object data);
+        HttpStatusCode HttpStatusCode { get; }
+        bool IsAuthenticated { get; }
+        void Logout();
+        HttpResponse Post(string command, object data);
+        dynamic Post(string command, object data, string accept);
+        void PostFile(string command, string path);
+        HttpResponse Put(string command, object data, string accept);
     }
 }

@@ -30,6 +30,9 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Net;
+using EasyHttp.Http;
 using YouTrackSharp.Infrastructure;
 using YouTrackSharp.Server;
 
@@ -44,6 +47,32 @@ namespace YouTrackSharp.Admin
             _connection = connection;
         }
 
+        public bool CreateUser(string login, string fullName, string email)
+        {
+            bool result = false;
+            HttpResponse response = this._connection.Post(string.Format("admin/user?login={0}&fullName={1}&email={2}", login, fullName, email), string.Empty);
+            
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        public bool CreateUser(string login, string fullName, string email, string password)
+        {
+            bool result = false;
+            
+            var response = this._connection.Put(string.Format("admin/user/{0}?fullName={1}&email={2}&password={3}", login, fullName, email, password), string.Empty, string.Empty);
+
+            if(response.StatusCode == HttpStatusCode.Created)
+            {
+                result = true;
+            }
+
+            return result;
+        }
 
         public User GetUserByUserName(string username)
         {
